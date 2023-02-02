@@ -2,6 +2,7 @@ from django.shortcuts import render
 from pytube import YouTube
 import os
 
+from .tasks import download_progress
 # Create your views here.
 
 def index(request):
@@ -24,15 +25,9 @@ def download(request):
 
 def start_download(request):
     global url
-    homedir = os.path.expanduser("~")
-    dirs = homedir + "/Downloads"
     if request.method == 'POST':
-        video = YouTube(url).streams.filter(progressive=True).all()
         try:
-            if "360p" in [vid.resolution for vid in video]:
-                YouTube(url).streams.get_by_resolution("360p").download(dirs)
-            else:
-                YouTube(url).streams.get_lowest_resolution().download(dirs)
+            download_progress.delay(url)
             return render(request, 'done.html')
         except Exception as e:
                 return render(request, 'error.html')
