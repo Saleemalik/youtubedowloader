@@ -27,7 +27,7 @@ def start_download(request):
     global url
     if request.method == 'POST':
         try:
-            download_progress.delay(url)
-            return render(request, 'done.html')
+            task = download_progress.delay(url)
+            return render(request, 'done.html', {'task_id': task.task_id})
         except Exception as e:
                 return render(request, 'error.html')
