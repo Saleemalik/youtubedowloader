@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'youtubedownloader',
     'django_celery_results',
+    'celery_progress',
 ]
 
 MIDDLEWARE = [
