@@ -24,6 +24,7 @@ def download_progress(self, url):
                 f.write(chunk)
                 bytes_received += len(chunk)
                 progress_recorder.set_progress(bytes_received, total)
+        return 'done'
 
     except Exception as _e:
         print(_e)

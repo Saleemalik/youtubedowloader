@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from pytube import YouTube
 import os
+from youtube.celery import app
+from django.http import JsonResponse
+
 
 from .tasks import download_progress
 # Create your views here.
@@ -24,6 +27,7 @@ def download(request):
 
 
 def start_download(request):
+    '''start downloading'''
     global url
     if request.method == 'POST':
         try:
@@ -31,3 +35,10 @@ def start_download(request):
             return render(request, 'done.html', {'task_id': task.task_id})
         except Exception as e:
                 return render(request, 'error.html')
+
+
+def stop_download(request):
+    '''To Cancelled the already executing task'''
+    task_id = eval(request.body).get('task_id')
+    app.control.terminate(task_id)
+    return JsonResponse({'result': 'cancelled'})
